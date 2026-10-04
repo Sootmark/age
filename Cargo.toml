@@ -1,0 +1,44 @@
+[package]
+name = "sootmark-age"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+description = "Streaming encryption and decryption in the age v1 file format, to X25519 recipients: the format written here, the cryptography from RustCrypto and dalek."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Sootmark/age"
+homepage = "https://sootmark.com"
+keywords = ["age", "encryption", "x25519", "forensics", "dfir"]
+categories = ["cryptography"]
+# Sources only: test vectors stay in the repository.
+include = ["/src", "/README.md", "/LICENSE-APACHE", "/LICENSE-MIT"]
+
+[lib]
+name = "age"
+
+[dependencies]
+chacha20poly1305 = { version = "0.11", default-features = false, features = ["zeroize"] }
+getrandom = { version = "0.4", default-features = false, features = ["sys_rng"] }
+hkdf = "0.13"
+hmac = { version = "0.13", features = ["zeroize"] }
+sha2 = { version = "0.11", default-features = false }
+x25519-dalek = { version = "3", default-features = false, features = ["static_secrets", "zeroize"] }
+
+# Browsers have no system random source: getrandom asks the JavaScript one.
+[target.'cfg(all(target_family = "wasm", target_os = "unknown"))'.dependencies]
+getrandom = { version = "0.4", default-features = false, features = ["wasm_js"] }
+
+[dev-dependencies]
+miniz_oxide = "0.9"
+proptest = "1"
+
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+module_name_repetitions = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+cast_possible_wrap = "allow"
+cast_precision_loss = "allow"

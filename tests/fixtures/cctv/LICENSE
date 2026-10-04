@@ -1,0 +1,22 @@
+These test vectors are copied unchanged from C2SP's CCTV repository,
+https://github.com/C2SP/CCTV/tree/main/age/testdata, at commit
+50a8ecf2a220f4c8bdc4f085789b8e85c26829e7 (2026-09-25). The format of each
+file is described in https://github.com/C2SP/CCTV/blob/main/age/README.md.
+
+They are available under the terms of the Zero-Clause BSD
+(https://opensource.org/licenses/0BSD, reproduced below), CC0 1.0
+(https://creativecommons.org/publicdomain/zero/1.0/), or Unlicense
+(https://unlicense.org/) license, to your choice.
+
+Copyright (c) 2022 The age Authors
+
+Permission to use, copy, modify, and/or distribute this software for any purpose
+with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
+THIS SOFTWARE.
