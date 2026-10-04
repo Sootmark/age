@@ -7,7 +7,7 @@ use std::fs;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 
-use age::{decrypt, parse_identities, Identity};
+use age::{decrypt, decrypt_seekable, parse_identities, Identity};
 
 fn fixtures() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/age")
@@ -40,6 +40,12 @@ fn files_from_age_decrypt() {
             .read_to_end(&mut out)
             .unwrap_or_else(|error| panic!("{name}: {error}"));
         assert!(out == plaintext(size), "{name}");
+        let mut seekable = Vec::new();
+        decrypt_seekable(std::io::Cursor::new(file), &identities)
+            .unwrap_or_else(|error| panic!("{name}: {error}"))
+            .read_to_end(&mut seekable)
+            .unwrap_or_else(|error| panic!("{name}: {error}"));
+        assert!(seekable == out, "{name}: read in any order");
         checked += 1;
     }
     assert_eq!(checked, 7);

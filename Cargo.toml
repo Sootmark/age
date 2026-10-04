@@ -1,6 +1,6 @@
 [package]
 name = "sootmark-age"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.85"
 description = "Streaming encryption and decryption in the age v1 file format, to X25519 recipients: the format written here, the cryptography from RustCrypto and dalek."

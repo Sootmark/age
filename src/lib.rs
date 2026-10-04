@@ -37,6 +37,7 @@ mod decrypt;
 mod encrypt;
 mod header;
 mod keys;
+mod seek;
 mod stream;
 mod x25519;
 
@@ -45,6 +46,7 @@ use std::{fmt, io};
 pub use decrypt::{decrypt, Decryptor};
 pub use encrypt::Encryptor;
 pub use keys::{parse_identities, Identity, KeyError, Recipient};
+pub use seek::{decrypt_seekable, SeekableDecryptor};
 
 /// This crate's version, for records of what encrypted or decrypted a file.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");

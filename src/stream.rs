@@ -25,6 +25,14 @@ pub(crate) struct Stream {
     counter: u64,
 }
 
+/// Chunk `index`'s nonce: the counter, big-endian, then the final flag.
+fn chunk_nonce(index: u64, last: bool) -> Nonce {
+    let mut nonce = Nonce::default();
+    nonce[3..11].copy_from_slice(&index.to_be_bytes());
+    nonce[11] = u8::from(last);
+    nonce
+}
+
 impl Stream {
     pub fn new(file_key: &FileKey, nonce: &[u8; NONCE_SIZE]) -> Self {
         Self {
@@ -96,11 +104,46 @@ impl Stream {
         ))
     }
 
+    /// Decrypts chunk `index` into `plaintext`, `last` telling whether it is
+    /// the final one: for reading out of order, where the file's length
+    /// says which chunk is final. On failure `plaintext` is left empty.
+    pub fn open_chunk(
+        &self,
+        index: u64,
+        last: bool,
+        sealed: &[u8],
+        plaintext: &mut Vec<u8>,
+    ) -> io::Result<()> {
+        plaintext.clear();
+        let Some(length) = sealed.len().checked_sub(TAG_SIZE) else {
+            return Err(io::Error::new(
+                io::ErrorKind::UnexpectedEof,
+                "age payload is truncated: it ends inside a chunk",
+            ));
+        };
+        let (ciphertext, tag) = sealed.split_at(length);
+        let tag = Tag::try_from(tag).expect("the tag is TAG_SIZE bytes");
+        plaintext.resize(length, 0);
+        let buffer = InOutBuf::new(ciphertext, plaintext).expect("same lengths");
+        if self
+            .cipher
+            .decrypt_inout_detached(&chunk_nonce(index, last), &[], buffer, &tag)
+            .is_ok()
+        {
+            return Ok(());
+        }
+        plaintext.clear();
+        Err(io::Error::new(
+            io::ErrorKind::InvalidData,
+            format!(
+                "age payload chunk {index} failed authentication: the file is damaged, \
+                 truncated or was tampered with"
+            ),
+        ))
+    }
+
     fn nonce(&self, last: bool) -> Nonce {
-        let mut nonce = Nonce::default();
-        nonce[3..11].copy_from_slice(&self.counter.to_be_bytes());
-        nonce[11] = u8::from(last);
-        nonce
+        chunk_nonce(self.counter, last)
     }
 
     fn advance(&mut self) -> io::Result<()> {
